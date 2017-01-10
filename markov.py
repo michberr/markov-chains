@@ -48,18 +48,27 @@ def make_chains(text_string, ngrams):
     return chains
 
 
+def get_uppercase(word_dict):
+    """Return all keys in dictionary whose first word starts with a capital"""
+    
+    all_keys = word_dict.keys()
+    upper_keys = [key for key in all_keys if key[0][0].isupper()]
+
+    return upper_keys
+
+
 def make_text(chains):
     """Takes dictionary of markov chains; returns random text."""
 
     text = []
 
-    # Starting ngram (as tuple)
-    start = choice(chains.keys())
+    # Starting ngram (as tuple), first word in tuple must be uppercase
+    start = choice(get_uppercase(chains))
 
     # Add starting ngram to text list
     text.extend(start)
 
-    while True:
+    while len(text) < 100:
         # Choose next word randomly from list
         new_word = choice(chains[start])
 
@@ -75,8 +84,21 @@ def make_text(chains):
         else:
             break
 
-    # Return text list formatted as string
-    return ' '.join(text)
+    # Find last sentence punctuation in text
+    text_string = ' '.join(text)
+
+    period = text_string.rfind('.')
+    exclamation = text_string.rfind('!')
+    question = text_string.rfind('?')
+
+    largest = max(period, exclamation, question)
+
+    # Remove everything after the last punctuation, if there is anything
+    if len(text_string) == largest+1:
+        return text_string
+    else:
+        return text_string[:largest+1]
+
 
 input_path = sys.argv[1]
 ngrams = int(sys.argv[2])
