@@ -18,7 +18,7 @@ def open_and_read_file(file_path):
     return text
 
 
-def make_chains(text_string, ngrams):
+def update_chains(text_string, chains, ngrams):
     """Takes input text as string; returns _dictionary_ of markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -33,7 +33,6 @@ def make_chains(text_string, ngrams):
 
     # split text in to list of words
     words = text_string.split()
-    chains = {}
 
     # get n-grams starting at each word
     for x in range(len(words[:-ngrams])):
@@ -100,14 +99,18 @@ def make_text(chains):
         return text_string[:largest+1]
 
 
-input_path = sys.argv[1]
-ngrams = int(sys.argv[2])
+first_path = sys.argv[1]
+second_path = sys.argv[2]
+ngrams = int(sys.argv[3])
 
 # Open the file and turn it into one long string
-input_text = open_and_read_file(input_path)
+input_text1 = open_and_read_file(first_path)
+input_text2 = open_and_read_file(second_path)
 
 # Get a Markov chain
-chains = make_chains(input_text, ngrams)
+chains = {}
+chains = update_chains(input_text1, chains, ngrams)
+chains = update_chains(input_text2, chains, ngrams)
 
 # Produce random text
 random_text = make_text(chains)
